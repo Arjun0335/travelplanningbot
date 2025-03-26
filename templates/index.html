@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Travel Planner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 AI Travel Planner ✈️</h1>
+        <p>Plan your trip effortlessly with an AI-powered itinerary generator!</p>
+
+        <form id="travelForm">
+            <label for="destination">Enter Destination:</label>
+            <input type="text" id="destination" name="destination" required>
+
+            <label for="duration">Trip Duration (days):</label>
+            <input type="number" id="duration" name="duration" min="1" max="14" required>
+
+            <label for="interests">Your Interests (e.g., history, food, adventure):</label>
+            <textarea id="interests" name="interests" required></textarea>
+
+            <button type="submit">Generate Itinerary</button>
+        </form>
+
+        <div id="results">
+            <h2>Recommended Places to Visit:</h2>
+            <ul id="recommendations"></ul>
+
+            <h2>Your Personalized Itinerary:</h2>
+            <p id="itinerary"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("travelForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let destination = document.getElementById("destination").value;
+            let duration = document.getElementById("duration").value;
+            let interests = document.getElementById("interests").value;
+
+            fetch("/get_itinerary", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ destination, duration, interests })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    document.getElementById("recommendations").innerHTML = data.recommendations.map(place => `<li>${place}</li>`).join("");
+                    document.getElementById("itinerary").innerText = data.itinerary;
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>
