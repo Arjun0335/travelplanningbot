@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import openai
 import requests
-
+import os
 app = Flask(__name__)
 
 # Set API keys (Replace with your actual API keys)
